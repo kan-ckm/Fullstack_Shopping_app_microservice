@@ -10,7 +10,7 @@ async function bootstrap() {
   });
   try {
     await app.listen(process.env.PORT ?? 4001);
-    console.log(`Order service is running on: ${await app.getUrl()}`);
+    console.log(`Order service is running on port ${process.env.PORT ?? 4005}`);
   } catch (err) {
     console.error('Error starting the server:', err);
   }

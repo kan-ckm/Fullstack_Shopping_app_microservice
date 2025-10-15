@@ -8,6 +8,11 @@ async function bootstrap() {
     methods: ['PUT', 'DELETE', 'POST', 'GET', 'PATCH'],
     credentials: true,
   });
-  await app.listen(process.env.PORT ?? 4005);
+  try {
+    await app.listen(process.env.PORT ?? 4005);
+    console.log(`User service is running on port ${process.env.PORT ?? 4005}`);
+  } catch (err) {
+    console.log(err);
+  }
 }
 bootstrap();

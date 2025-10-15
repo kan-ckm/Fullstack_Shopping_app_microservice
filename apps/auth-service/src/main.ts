@@ -8,6 +8,12 @@ async function bootstrap() {
     methods: ['DELETE', 'PATCH', 'GET', 'PUT', 'POST'],
     credentials: true,
   });
-  await app.listen(process.env.PORT ?? 4004);
+  try {
+    await app.listen(process.env.PORT ?? 4004);
+    console.log(`Auth service is running on port ${process.env.PORT ?? 4005}`);
+
+  } catch (err) {
+    console.error('Error starting the server:', err);
+  }
 }
 bootstrap();
