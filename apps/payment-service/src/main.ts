@@ -8,6 +8,11 @@ async function bootstrap() {
     methods: ['DELETE', 'PATCH', 'GET', 'PUT', 'POST'],
     credentials: true,
   });
-  await app.listen(process.env.PORT ?? 4003);
+  try {
+    await app.listen(process.env.PORT ?? 4003);
+    console.log(`Payment service is running on: ${await app.getUrl()}`);
+  } catch (err) {
+    console.error('Error starting the server:', err);
+  }
 }
 bootstrap();

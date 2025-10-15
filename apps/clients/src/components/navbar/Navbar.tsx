@@ -1,3 +1,4 @@
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import { Bell, Home } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -22,7 +23,13 @@ const Navbar = () => {
                 </Link>
                 <Bell className='w-4 h-4 text-gray-600' />
                 <ShoppingCartIcon />
-                <Link href={'/login'} className='rounded-md shadow-md px-2 py-1'>Sign in</Link>
+                <SignedOut>
+                    <SignInButton />
+
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                </SignedIn>
             </div>
         </nav>
     )

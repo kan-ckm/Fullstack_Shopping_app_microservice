@@ -3,6 +3,16 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 4001);
+  app.enableCors({
+    origin: ['http://localhost:3002,http://localhost:3003'],
+    methods: ['PUT', 'DELETE', 'POST', 'GET', 'PATCH'],
+    credentials: true,
+  });
+  try {
+    await app.listen(process.env.PORT ?? 4001);
+    console.log(`Order service is running on: ${await app.getUrl()}`);
+  } catch (err) {
+    console.error('Error starting the server:', err);
+  }
 }
 bootstrap();
