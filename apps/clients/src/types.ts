@@ -19,6 +19,29 @@ export type CartItemType = ProductType & {
 }
 
 export type CartItemsType = CartItemType[]
+// Register form schema
+export const registerFormSchema = z.object({
+    name: z.string().min(1, "Name is required!").max(100, "Name is too long!"),
+    email: z.string().email({ message: "Invalid email format!" }).min(1, { message: 'Email is required!' }),
+    password: z.string()
+        .min(8, "Password must be at least 8 characters!")
+        .regex(/[A-Z]/, "Must contain at least one uppercase letter!")
+        .regex(/[a-z]/, "Must contain at least one lowercase letter!")
+        .regex(/[0-9]/, "Must contain at least one number!")
+        .regex(/[^A-Za-z0-9]/, "Must contain at least one special character!"),
+    confirmPassword: z.string().min(1, "Confirm password is required!"),
+    role: z.enum(['user', 'admin']).default('user')
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match!",
+})
+export type RegisterFormInputs = z.infer<typeof registerFormSchema>;
+// Login form schema
+export const loginFormSchema = z.object({
+    email: z.string().email({ message: "Invalid email format!" }).min(1, { message: 'Email is required!' }),
+    password: z.string().min(1, "Password is required!")
+})
+
+export type LoginFormInputs = z.infer<typeof loginFormSchema>;
 
 export const shippingFormSchema = z.object({
     name: z.string().min(1, "Name is required!"),

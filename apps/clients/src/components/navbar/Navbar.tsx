@@ -1,3 +1,4 @@
+
 import { Bell, Home } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -22,7 +23,9 @@ const Navbar = () => {
                 </Link>
                 <Bell className='w-4 h-4 text-gray-600' />
                 <ShoppingCartIcon />
-                Sigin
+                <Link href={'/login'}>
+                    Sign in
+                </Link>
             </div>
         </nav>
     )
