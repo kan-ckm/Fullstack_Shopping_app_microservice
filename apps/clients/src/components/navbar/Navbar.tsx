@@ -1,9 +1,13 @@
 
-import { Bell, Home } from 'lucide-react'
+import { Bell, Home, User } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Dialog, DialogTrigger } from '../ui/dialog'
 import SreachBar from './Search'
 import ShoppingCartIcon from './ShoppingCartIcon'
+import LoginDialog from '../Home/auth/LoginDialog'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
+import RegisterDialog from '../Home/auth/RegisterDialog'
 
 const Navbar = () => {
     return (
@@ -23,9 +27,28 @@ const Navbar = () => {
                 </Link>
                 <Bell className='w-4 h-4 text-gray-600' />
                 <ShoppingCartIcon />
-                <Link href={'/login'}>
-                    Sign in
-                </Link>
+                {/* auth dialog */}
+                <HoverCard openDelay={100} closeDelay={200} >
+                    <HoverCardTrigger><User className='w-5 h-5 text-gray-600' /></HoverCardTrigger>
+                    <HoverCardContent className='w-30 h-20 '>
+                        <div className="flex flex-col gap-2">
+                            <Dialog>
+                                <DialogTrigger className='h-4'>
+                                    <span className='text-sm font-semibold'>Sign in</span>
+                                </DialogTrigger>
+                                <LoginDialog />
+                            </Dialog>
+                            <div className="border-b" />
+                            <Dialog>
+                                <DialogTrigger className='h-4'>
+                                    <span className='text-sm font-semibold'>Sign up</span>
+                                </DialogTrigger>
+                                <RegisterDialog />
+                            </Dialog>
+                        </div>
+                    </HoverCardContent>
+                </HoverCard>
+
             </div>
         </nav>
     )
