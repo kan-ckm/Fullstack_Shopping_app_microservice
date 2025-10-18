@@ -2,16 +2,21 @@
   "name": "@repo/auth-db",
   "version": "0.0.0",
   "type": "module",
-    "scripts": {
+  "scripts": {
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev --skip-generate",
     "db:deploy": "prisma migrate deploy"
   },
   "devDependencies": {
-    "prisma": "^6.17.1"
+    "@types/node": "^24.8.1",
+    "prisma": "^6.17.1",
+    "@repo/typescript-config":"workspace:*"
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",
     "npm": "^11.6.2"
+  },
+    "exports": {
+    ".": "./src/index.ts"
   }
 }
