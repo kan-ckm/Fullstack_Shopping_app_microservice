@@ -1,14 +1,63 @@
+
+
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-
+import { AuthDto } from './dto';
+import * as bcrypt from 'bcrypt';
+import { Tokens } from './types';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
-    constructor(private prisma: PrismaService) { }
+    constructor(private prisma: PrismaService,
+        private JwtService: JwtService
+    ) { }
+    // hàm hash data
+    hashData(data: string) {
+        return bcrypt.hash(data, 10);
+    }
+    // hàm tạo access token và refresh token
+    async getTokens(userId: string, email: string): Promise<Tokens> {
+        const [at, rt] = await Promise.all([
+            this.JwtService.signAsync({
+                sub: userId,
+                email: email,
+            }, {
+                expiresIn: 15 * 60,
+                secret: process.env.AT_SECRET
 
+            }),
+            this.JwtService.signAsync({
+                sub: userId,
+                email: email,
+            }, {
+                expiresIn: 60 * 60 * 24 * 7,
+                secret: process.env.RT_SECRET
+            }),
+
+
+        ])
+        return {
+            access_token: at,
+            refresh_token: rt
+        }
+    }
     // đăng ký 
+    async signup(dto: AuthDto): Promise<Tokens> {
+        try {
+            const hashedPassword = await this.hashData(dto.password);
+            const newUser = await this.prisma.user.create({
+                data: {
+                    email: dto.email,
+                    hash: hashedPassword
+                }
+            })
+            const tokens = await this.getTokens(newUser.id, newUser.email);
+            return tokens
 
-    signup() {
-
+        } catch (e) {
+            console.log('Lỗi', e);
+            throw e
+        }
     }
     // đăng nhập
     signin() {
