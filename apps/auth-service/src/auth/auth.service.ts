@@ -11,6 +11,39 @@ export class AuthService {
     constructor(private prisma: PrismaService,
         private JwtService: JwtService
     ) { }
+
+    // đăng ký 
+    async signup(dto: AuthDto): Promise<Tokens> {
+        try {
+            const hashedPassword = await this.hashData(dto.hash);
+            const newUser = await this.prisma.user.create({
+                data: {
+                    email: dto.email,
+                    hash: hashedPassword
+                }
+            })
+            const tokens = await this.getTokens(newUser.id, newUser.email);
+            await this.updateRtHash(newUser.id, tokens.refresh_token)
+            return tokens
+
+        } catch (e) {
+            console.log('Lỗi', e);
+            throw e
+        }
+    }
+    // đăng nhập
+    signin() {
+
+    }
+    // đăng xuất
+    logout() {
+
+    }
+    // làm mới token
+    refresh_tokens() {
+
+    }
+
     // hàm hash data
     hashData(data: string) {
         return bcrypt.hash(data, 10);
@@ -41,34 +74,16 @@ export class AuthService {
             refresh_token: rt
         }
     }
-    // đăng ký 
-    async signup(dto: AuthDto): Promise<Tokens> {
-        try {
-            const hashedPassword = await this.hashData(dto.password);
-            const newUser = await this.prisma.user.create({
-                data: {
-                    email: dto.email,
-                    hash: hashedPassword
-                }
-            })
-            const tokens = await this.getTokens(newUser.id, newUser.email);
-            return tokens
-
-        } catch (e) {
-            console.log('Lỗi', e);
-            throw e
-        }
+    // hàm hash và lưu refresh_token  vào db
+    async updateRtHash(userId: string, rt: string) {
+        const hash = await this.hashData(rt);
+        await this.prisma.user.update({
+            where: {
+                id: userId
+            }, data: {
+                hashedRt: hash,
+            }
+        })
     }
-    // đăng nhập
-    signin() {
 
-    }
-    // đăng xuất
-    logout() {
-
-    }
-    // làm mới token
-    refresh_tokens() {
-
-    }
 }
