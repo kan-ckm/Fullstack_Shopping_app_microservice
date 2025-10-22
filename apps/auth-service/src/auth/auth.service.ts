@@ -1,6 +1,6 @@
 
 
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as bcrypt from 'bcrypt';
@@ -32,16 +32,62 @@ export class AuthService {
         }
     }
     // đăng nhập
-    signin() {
+    async signin(dto: AuthDto): Promise<Tokens> {
+        try {
+            const user = await this.prisma.user.findUnique({
+                where: {
+                    email: dto.email
+                }
+            })
+            if (!user) {
+                throw new Error("User not found")
+            }
+            const passwordMatches = await bcrypt.compare(dto.hash, user.hash)
+            if (!passwordMatches) {
+                throw new Error("Invalid password")
+            }
+            const tokens = await this.getTokens(user.id, user.email);
+            await this.updateRtHash(user.id, tokens.refresh_token)
+            return tokens
 
+        } catch (e) {
+            console.log('lỗi', e)
+            throw e
+        }
     }
     // đăng xuất
-    logout() {
-
+    async logout(userId: string) {
+        await this.prisma.user.updateMany({
+            where: {
+                id: userId,
+                hashedRt: {
+                    not: null
+                },
+            }, data: {
+                hashedRt: null,
+            }
+        })
     }
     // làm mới token
-    refresh_tokens() {
-
+    async refresh_tokens(userId: string, rt: string) {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+        if (!user) {
+            throw new ForbiddenException("Access denied")
+        }
+        if (!user.hashedRt) {
+            throw new ForbiddenException("Access denied")
+        }
+        const rtMatches = await bcrypt.compare(rt, user.hashedRt)
+        if (!rtMatches) {
+            throw new ForbiddenException("Access denied")
+        }
+        const tokens = await this.getTokens(user.id, user.email);
+        await this.updateRtHash(user.id, tokens.refresh_token);
+        return tokens;
     }
 
     // hàm hash data
