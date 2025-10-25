@@ -1,14 +1,21 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Request } from 'express';
 import { Injectable } from '@nestjs/common';
+import { type Request } from 'express';
 //refresh token strategy
 @Injectable()
 export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     constructor() {
 
         super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest: ExtractJwt.fromExtractors([
+                (request: Request) => {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+                    return request?.cookies?.refresh_token
+                },
+                ExtractJwt.fromAuthHeaderAsBearerToken(),
+            ]),
+
             secretOrKey: process.env.RT_SECRET!,
             passReqToCallback: true,
         })
@@ -16,8 +23,11 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     }
     validate(req: Request, payload: any) {
 
-        const refreshToken = req.get('authorization')?.replace('Bearer', '').trim();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const refreshToken =
+            req.cookies?.refresh_token ||
+            req.get('authorization')?.replace('Bearer', '').trim();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment
         return { ...payload, refreshToken };
     }
 }
