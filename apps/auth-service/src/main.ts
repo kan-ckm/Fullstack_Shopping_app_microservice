@@ -1,6 +1,6 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,6 +10,7 @@ async function bootstrap() {
     methods: ['DELETE', 'PATCH', 'GET', 'PUT', 'POST'],
     credentials: true,
   });
+
   try {
     await app.listen(process.env.PORT ?? 4004);
     console.log(`Auth service is running on port ${process.env.PORT ?? 4004}`);
