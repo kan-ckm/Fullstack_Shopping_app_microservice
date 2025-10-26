@@ -15,8 +15,11 @@ export class AuthController {
     @Post('/signup')
     @HttpCode(201)
     async signup(@Body() dto: AuthDto, @Res({ passthrough: true }) response: Response,) {
-        const tokens = await this.authService.signup(dto);
-        this.setAuthCookies(response, tokens);
+        const result = await this.authService.signup(dto);
+        this.setAuthCookies(response, {
+            access_token: result.access_token,
+            refresh_token: result.refresh_token
+        });
         return {
             message: 'User registered successfully',
         }
@@ -24,9 +27,21 @@ export class AuthController {
     // đăng nhập
     @Public()
     @Post('/signin')
-    @HttpCode(201)
-    signin(@Body() dto: AuthDto): Promise<Tokens> {
-        return this.authService.signin(dto);
+    @HttpCode(200)
+    async signin(@Body() dto: AuthDto,
+        @Res({
+            passthrough: true
+        }) response: Response) {
+
+
+        const result = await this.authService.signin(dto);
+        this.setAuthCookies(response, {
+            access_token: result.access_token,
+            refresh_token: result.refresh_token
+        });
+        return {
+            message: 'Đăng nhập thành công'
+        };
     }
     // đăng xuất
     @Post('/logout')

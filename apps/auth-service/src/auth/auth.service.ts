@@ -1,11 +1,11 @@
 
 
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
-import * as bcrypt from 'bcrypt';
 import { Tokens } from './types';
-import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
     constructor(private prisma: PrismaService,
@@ -40,11 +40,11 @@ export class AuthService {
                 }
             })
             if (!user) {
-                throw new Error("User not found")
+                throw new NotFoundException("User not found")
             }
             const passwordMatches = await bcrypt.compare(dto.password, user.passoword)
             if (!passwordMatches) {
-                throw new Error("Invalid password")
+                throw new ForbiddenException("Invalid password")
             }
             const tokens = await this.getTokens(user.id, user.email);
             await this.updateRtHash(user.id, tokens.refresh_token)

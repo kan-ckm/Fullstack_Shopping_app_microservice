@@ -11,6 +11,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import RegisterDialog from './RegisterDialog'
 import { authService } from '@repo/shared-api';
+import { toast } from 'sonner'
 const LoginDialog = () => {
     const form = useForm<LoginFormInputs>({
         resolver: zodResolver(loginFormSchema),
@@ -22,6 +23,14 @@ const LoginDialog = () => {
     async function onSubmit(values: LoginFormInputs) {
         try {
             const res = await authService.login(values)
+            console.log('✅ Response:', res.data)
+            console.log('✅ Response headers:', res.headers) // Xem Set-Cookie
+            // Kiểm tra cookie
+            console.log('🍪 Cookies:', document.cookie)
+            console.log('check', res.data.message)
+            if (res.status === 200) {
+                toast.success(res.data.message)
+            }
             console.log('Response:', res)
         } catch (e) {
             console.log('lỗi:', e)
