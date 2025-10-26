@@ -15,11 +15,11 @@ export class AuthService {
     // đăng ký 
     async signup(dto: AuthDto): Promise<Tokens> {
         try {
-            const hashedPassword = await this.hashData(dto.hash);
+            const hashedPassword = await this.hashData(dto.password);
             const newUser = await this.prisma.user.create({
                 data: {
                     email: dto.email,
-                    hash: hashedPassword
+                    passoword: hashedPassword
                 }
             })
             const tokens = await this.getTokens(newUser.id, newUser.email);
@@ -42,7 +42,7 @@ export class AuthService {
             if (!user) {
                 throw new Error("User not found")
             }
-            const passwordMatches = await bcrypt.compare(dto.hash, user.hash)
+            const passwordMatches = await bcrypt.compare(dto.password, user.passoword)
             if (!passwordMatches) {
                 throw new Error("Invalid password")
             }

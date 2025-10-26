@@ -16,7 +16,7 @@ export class AuthService {
     }
 
     async login(data: LoginDto) {
-        return authClient.post('/auth/login', data);
+        return authClient.post('/auth/signin', data);
     }
 
     async logout() {

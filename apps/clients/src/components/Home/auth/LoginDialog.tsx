@@ -10,7 +10,7 @@ import Link from 'next/link'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import RegisterDialog from './RegisterDialog'
-
+import { authService } from '@repo/shared-api';
 const LoginDialog = () => {
     const form = useForm<LoginFormInputs>({
         resolver: zodResolver(loginFormSchema),
@@ -19,8 +19,13 @@ const LoginDialog = () => {
             password: ''
         }
     })
-    function onSubmit(values: LoginFormInputs) {
-        console.log(values)
+    async function onSubmit(values: LoginFormInputs) {
+        try {
+            const res = await authService.login(values)
+            console.log('Response:', res)
+        } catch (e) {
+            console.log('lỗi:', e)
+        }
     }
     return (
         <DialogContent>
@@ -57,13 +62,10 @@ const LoginDialog = () => {
                             </FormItem>
                         )}
                     />
+                    <Button className=' w-full text-md font-semibold' type="submit">Sign in</Button>
 
                 </form>
-                <DialogFooter >
-                    <DialogClose asChild>
-                        <Button className=' w-full text-md font-semibold' type="submit">Sign in</Button>
-                    </DialogClose>
-                </DialogFooter>
+
             </Form>
         </DialogContent>
     )

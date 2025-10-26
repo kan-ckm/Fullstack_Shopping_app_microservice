@@ -280,9 +280,6 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.3
         version: 1.2.3(@types/react@19.1.0)(react@19.1.0)
-      axios:
-        specifier: ^1.12.2
-        version: 1.12.2
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -323,6 +320,9 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@repo/shared-api':
+        specifier: workspace:*
+        version: link:../../packages/shared-api
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
