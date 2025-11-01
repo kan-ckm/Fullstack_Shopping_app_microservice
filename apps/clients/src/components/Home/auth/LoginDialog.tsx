@@ -23,8 +23,7 @@ const LoginDialog = () => {
     async function onSubmit(values: LoginFormInputs) {
         try {
             const res = await authService.login(values)
-            console.log('✅ Response:', res.data)
-            console.log('✅ Response headers:', res.headers) // Xem Set-Cookie
+
             // Kiểm tra cookie
             console.log('🍪 Cookies:', document.cookie)
             console.log('check', res.data.message)

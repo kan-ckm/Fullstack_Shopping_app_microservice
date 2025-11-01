@@ -9,7 +9,7 @@ async function bootstrap() {
     credentials: true,
   });
   try {
-    await app.listen(process.env.PORT ?? 4005);
+    await app.listen(process.env.PORT ?? 3005);
     console.log(`User service is running on port ${process.env.PORT ?? 4005}`);
   } catch (err) {
     console.log(err);

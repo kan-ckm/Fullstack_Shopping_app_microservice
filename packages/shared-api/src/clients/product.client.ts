@@ -16,5 +16,5 @@ export const productClient = axios.create({
 });
 
 setupRefreshTokenInterceptor(productClient, {
-    refreshUrl: `${AUTH_SERVICE_URL}/auth/refresh`,
+    refreshUrl: `${AUTH_SERVICE_URL}/refresh`,
 });
